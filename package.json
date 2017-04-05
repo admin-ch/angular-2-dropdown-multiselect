@@ -1,35 +1,56 @@
 {
-  "name": "angular-2-dropdown-multiselect",
-  "version": "1.0.6",
-  "description": "Customizable dropdown multiselect in Angular 2 with bootstrap css.",
-  "main": "src/multiselect-dropdown.ts",
+  "name": "ngx-multiselect-dropdown",
+  "version": "1.0.0-alpha.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/softsimon/angular-2-dropdown-multiselect.git"
+    "url": "git+https://github.com/softsimon/ngx-dropdown-multiselect.git"
   },
   "keywords": [
-    "angular 2",
+    "angular 4",
     "dropdown",
     "multi select"
   ],
-  "author": "Simon Lindh",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/softsimon/angular-2-dropdown-multiselect/issues"
-  },
-  "homepage": "http://softsimon.github.io/angular-2-dropdown-multiselect",
   "dependencies": {
-  },
-  "devDependencies": {
     "@angular/common": "^4.0.0",
     "@angular/compiler": "^4.0.0",
-    "@angular/compiler-cli": "^4.0.0",
     "@angular/core": "^4.0.0",
     "@angular/forms": "^4.0.0",
-    "@angular/platform-server": "^4.0.0",
-    "codelyzer": "^2.0.0",
+    "@angular/platform-browser": "^4.0.0",
     "rxjs": "^5.1.0",
-    "typescript": "^2.2.2",
-    "zone.js": "^0.7.6"
+    "zone.js": "^0.8.4"
+  },
+  "devDependencies": {
+    "@angular/compiler-cli": "^4.0.0",
+    "@angular/platform-browser-dynamic": "^4.0.0",
+    "@types/gulp": "^4.0.2",
+    "@types/jasmine": "^2.5.47",
+    "@types/karma": "^0.13.34",
+    "@types/node": "^7.0.12",
+    "codelyzer": "^3.0.0-beta.4",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-file": "^0.3.0",
+    "gulp-tslint": "^7.1.0",
+    "gulp-util": "^3.0.8",
+    "ie-shim": "^0.1.0",
+    "jasmine": "^2.5.2",
+    "jasmine-core": "^2.5.2",
+    "jasmine-node": "^1.14.5",
+    "karma": "^1.5.0",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-coverage": "^1.1.1",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-jasmine": "^1.0.2",
+    "karma-sauce-launcher": "^1.1.0",
+    "karma-sourcemap-loader": "^0.3.7",
+    "run-sequence": "^1.2.2",
+    "systemjs": "^0.19.40",
+    "ts-node": "^3.0.2",
+    "tslint": "^4.5.1",
+    "typescript": "^2.2.2"
+  },
+  "scripts": {
+    "build": "./node_modules/.bin/gulp build"
   }
 }

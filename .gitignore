@@ -4,3 +4,8 @@ src/*.js.map
 /compiled
 *.metadata.json
 *.map.js
+
+.idea/
+dist
+temp
+coverage

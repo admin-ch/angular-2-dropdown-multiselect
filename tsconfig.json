@@ -1,16 +1,17 @@
-﻿{
-  "compilerOptions": {
-    "target": "es5",
-    "lib": ["es6", "dom"],
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "sourceMap": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true
-  },
-  "angularCompilerOptions": {
-    "genDir": "compiled"
-  }
+{
+    "compilerOptions": {
+        "target": "ES5",
+        "lib": ["es2015", "dom"],
+        "module": "commonjs",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "noEmitOnError": true,
+        "outDir": "temp",
+        "sourceMap": true,
+        "baseUrl": "./node_modules"
+    },
+    "include": [
+        "src/**/*.ts"
+    ],
+    "compileOnSave": false
 }

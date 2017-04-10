@@ -2,13 +2,15 @@ import {NgModule, ModuleWithProviders} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 
-import {MultiselectDropdown, MultiSelectSearchFilter} from './multiselect-dropdown';
+import {MultiselectDropdown} from './multiselect-dropdown';
 import {MultiselectDropdownConfig} from './multiselect-config';
+import {MultiselectSearchPipe} from './multiselect-search.pipe';
+import {TranslateModule} from '@ngx-translate/core';
 
 @NgModule({
-    imports: [CommonModule, FormsModule],
-    exports: [MultiselectDropdown, MultiSelectSearchFilter],
-    declarations: [MultiselectDropdown, MultiSelectSearchFilter],
+    imports: [CommonModule, FormsModule, TranslateModule],
+    exports: [MultiselectDropdown, MultiselectSearchPipe],
+    declarations: [MultiselectDropdown, MultiselectSearchPipe],
 })
 export class MultiselectDropdownModule {
     static forRoot(): ModuleWithProviders {

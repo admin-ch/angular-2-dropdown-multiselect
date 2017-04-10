@@ -3,9 +3,7 @@ import {Injectable} from '@angular/core';
 @Injectable()
 export class MultiselectDropdownConfig {
     autoUnselect = false;
-    buttonClasses = 'btn btn-secondary';
     checkedStyle: CheckedStyle = 'checkboxes';
-    closeOnSelect = false;
     displayAllSelectedText = false;
     dynamicTitleMaxItems = 3;
     enableSearch = false;
@@ -16,4 +14,4 @@ export class MultiselectDropdownConfig {
     showUncheckAll = false;
 }
 
-export type CheckedStyle =  'checkboxes' | 'glyphicon' | 'fontawesome';
+export type CheckedStyle =  'checkboxes' | 'fontawesome';

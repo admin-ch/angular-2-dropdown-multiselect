@@ -96,6 +96,7 @@ gulp.task('npm', () => {
 });
 
 gulp.task('build', (done) => {
-    runSequence(/*'lint', */'test', 'clean:build', 'ngc', /*'umd', */'npm', done);
+	//TODO: clean:build is currently disabled that webpack doesn't lose the js files
+    runSequence(/*'lint', */'test', /*'clean:build',*/ 'ngc', /*'umd', */'npm', done);
 });
 

@@ -6,318 +6,287 @@
  */
 
 import {
-    Component,
-    Pipe,
-    OnInit,
-    DoCheck,
-    HostListener,
-    Input,
-    ElementRef,
-    Output,
-    EventEmitter,
-    forwardRef,
-    IterableDiffers,
-    PipeTransform
+	Component,
+	OnInit,
+	DoCheck,
+	HostListener,
+	Input,
+	ElementRef,
+	Output,
+	EventEmitter,
+	forwardRef,
+	IterableDiffers
 } from '@angular/core';
-import {NG_VALUE_ACCESSOR, ControlValueAccessor, Validator, AbstractControl} from '@angular/forms';
+import {NG_VALUE_ACCESSOR, ControlValueAccessor} from '@angular/forms';
 import {MultiselectDropdownConfig} from './multiselect-config';
 
 const MULTISELECT_VALUE_ACCESSOR: any = {
-    provide: NG_VALUE_ACCESSOR,
-    useExisting: forwardRef(() => MultiselectDropdown),
-    multi: true
+	provide: NG_VALUE_ACCESSOR,
+	useExisting: forwardRef(() => MultiselectDropdown),
+	multi: true
 };
 
 export interface IMultiSelectTexts {
-    checkAll?: string;
-    uncheckAll?: string;
-    checked?: string;
-    checkedPlural?: string;
-    searchPlaceholder?: string;
-    defaultTitle?: string;
-    allSelected?: string;
+	checkAll?: string;
+	uncheckAll?: string;
+	checked?: string;
+	checkedPlural?: string;
+	searchPlaceholder?: string;
+	defaultTitle?: string;
+	allSelected?: string;
 }
 
-@Pipe({
-    name: 'searchFilter'
-})
-export class MultiSelectSearchFilter implements PipeTransform {
-    /*transform(options: Array<IMultiSelectOption>, args: string): Array<IMultiSelectOption> {
-     const matchPredicate = (option: IMultiSelectOption) => option.name.toLowerCase().indexOf((args || '').toLowerCase()) > -1,
-     getChildren = (option: IMultiSelectOption) => options.filter(child => child.parentId === option.id),
-     getParent = (option: IMultiSelectOption) => options.find(parent => option.parentId === parent.id);
-     return options.filter((option: IMultiSelectOption) => {
-     return matchPredicate(option) ||
-     (typeof (option.parentId) === 'undefined' && getChildren(option).some(matchPredicate)) ||
-     (typeof (option.parentId) !== 'undefined' && matchPredicate(getParent(option)));
-     });
-     }*/
-
-    transform(value) {
-        //TODO not implemented yet!
-        return value;
-    }
-
-
-}
 
 @Component({
-    selector: 'multiselect-dropdown',
-    providers: [MULTISELECT_VALUE_ACCESSOR],
-    styles: [`
-    a {
-      outline: none !important;
-    }
-  `],
-    template: `
+	selector: 'multiselect-dropdown',
+	providers: [MULTISELECT_VALUE_ACCESSOR],
+	styles: [
+		`
+			.dropdown-toggle {
+			    position: relative;
+    			background-color: #fff;
+    			padding-right: 30px;
+    			border-radius: 0;
+    			text-align: left;
+    			white-space: normal;
+    			min-width: 100%;
+    		}
+    		
+    		.dropdown-toggle::after {
+    			    position: absolute;
+    				right: 10px;
+    		}
+    		
+    		.checkbox label {
+    			margin-bottom: 0;
+    		}
+    		
+    		button.dropdown-item {
+    			cursor: pointer; 
+    		}
+		`
+	],
+	template: `
     <div class="dropdown">
-      <button type="button" class="dropdown-toggle" [ngClass]="settings.buttonClasses"
-              (click)="toggleDropdown()" [disabled]="disabled">{{ title }}&nbsp;<span class="caret"></span></button>
-      <div *ngIf="isVisible" class="dropdown-menu" [class.pull-right]="settings.pullRight" [class.dropdown-menu-right]="settings.pullRight"
-          [style.max-height]="settings.maxHeight" style="display: block; height: auto; overflow-y: auto;">
-        <button class="dropdown-item search" *ngIf="settings.enableSearch">
-          <div class="input-group input-group-sm">
-            <span class="input-group-addon" id="sizing-addon3"><i class="fa fa-search"></i></span>
-            <input type="text" class="form-control" placeholder="{{ texts.searchPlaceholder }}"
-                   aria-describedby="sizing-addon3" [(ngModel)]="searchFilterText" [ngModelOptions]="{standalone: true}">
-            <span class="input-group-btn" *ngIf="searchFilterText.length > 0">
-  			    <button class="btn btn-default btn-secondary" type="button" (click)="clearSearch($event)"><i class="fa fa-times"></i></button>
-	          </span>
-          </div>
-        </button>
-        <div class="dropdown-divider divider" *ngIf="settings.enableSearch"></div>
-        <button class="dropdown-item check-control check-control-check" *ngIf="settings.showCheckAll" (click)="checkAll()">
-            <span style="width: 16px;"
-              [ngClass]="{'glyphicon glyphicon-ok': settings.checkedStyle !== 'fontawesome',
-              'fa fa-check': settings.checkedStyle === 'fontawesome'}"></span>
-            {{ texts.checkAll }}
-        </button>
-        <button class="dropdown-item check-control check-control-uncheck" *ngIf="settings.showUncheckAll" (click)="uncheckAll()">
-            <span style="width: 16px;"
-              [ngClass]="{'glyphicon glyphicon-remove': settings.checkedStyle !== 'fontawesome',
-              'fa fa-times': settings.checkedStyle === 'fontawesome'}"></span>
-            {{ texts.uncheckAll }}
-        </button>
-        <div *ngIf="settings.showCheckAll || settings.showUncheckAll" class="dropdown-divider divider"></div>
-        <button class="dropdown-item" *ngFor="let option of options | searchFilter:searchFilterText"
-            (click)="setSelected($event, option)">
-            <input *ngIf="settings.checkedStyle === 'checkboxes'" type="checkbox"
-              [checked]="isSelected(option)" (click)="preventCheckboxCheck($event, option)"/>
-            <span *ngIf="settings.checkedStyle === 'glyphicon'" style="width: 16px;"
-                  class="glyphicon" [class.glyphicon-ok]="isSelected(option)"></span>
-            <span *ngIf="settings.checkedStyle === 'fontawesome'" style="width: 16px;display: inline-block;">
-                  <i *ngIf="isSelected(option)" class="fa fa-check" aria-hidden="true"></i>
-                </span>
-            <span [ngClass]="settings.itemClasses">
-              {{ formatOptionForLabel(option)}}
-            </span>
-        </button>
-      </div>
+        <button type="button" class="dropdown-toggle btn btn-default" 
+                (click)="toggleDropdown()" [disabled]="disabled">
+                {{ title }}
+		</button>
+		<div *ngIf="isVisible" class="dropdown-menu" [class.pull-right]="settings.pullRight" [class.dropdown-menu-right]="settings.pullRight"
+			[style.max-height]="settings.maxHeight" style="display: block; height: auto; overflow-y: auto;">
+			<div class="dropdown-item" *ngIf="settings.enableSearch">
+				<div class="input-group input-group-sm control-action" >
+					<span class="input-group-addon" id="sizing-addon3"><i class="fa fa-search"></i></span>
+					<input type="text" class="form-control" placeholder="{{ texts.searchPlaceholder }}"
+							aria-describedby="sizing-addon3" [(ngModel)]="searchFilterText" [ngModelOptions]="{standalone: true}">
+					<button class="control-action-trigger" (click)="clearSearch($event)">
+						<span class="fa fa-times-circle"></span>
+					</button>
+				</div>
+			</div>
+			<div class="dropdown-divider divider" *ngIf="settings.enableSearch"></div>
+			<button class="dropdown-item check-control check-control-check" *ngIf="settings.showCheckAll" (click)="checkAll()">
+				<span style="width: 16px;" class="fa fa-check">
+				</span>
+				{{ texts.checkAll }}
+			</button>
+			<button class="dropdown-item check-control check-control-uncheck" *ngIf="settings.showUncheckAll" (click)="uncheckAll()">
+				<span style="width: 16px;" class="fa fa-times">
+				</span>
+				{{ texts.uncheckAll }}
+			</button>
+			<div *ngIf="settings.showCheckAll || settings.showUncheckAll" class="dropdown-divider divider"></div>
+			<button class="dropdown-item" *ngFor="let option of options | searchFilter:searchFilterText"
+				(click)="toggleSelection($event, option)">
+				<div *ngIf="settings.checkedStyle === 'checkboxes'" class="checkbox">
+					<!-- TODO how should the id's be generated?-->
+					<input tabindex="-1" type="checkbox" id="dropdown-multiselect-{{formatOptionForLabel(option)}}" [checked]="isSelected(option)" (click)="preventCheckboxCheck($event)"> 
+					<label for="dropdown-multiselect-{{formatOptionForLabel(option)}}">{{formatOptionForLabel(option)}}</label>
+				</div>
+				<span *ngIf="settings.checkedStyle === 'fontawesome'" style="width: 16px;display: inline-block;">
+					<i *ngIf="isSelected(option)" class="fa fa-check" aria-hidden="true"></i>
+				</span>
+				<span *ngIf="settings.checkedStyle === 'fontawesome'" [ngClass]="settings.itemClasses">
+					{{ formatOptionForLabel(option)}}
+				</span>
+			</button>
+		</div>
     </div>
   `
 })
-export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccessor, Validator {
-    @Input() options: any[];
-    @Input() settings: MultiselectDropdownConfig;
-    @Input() texts: IMultiSelectTexts;
-    @Input() disabled: boolean = false;
-    @Input() labelFormatter: (option: any) => string;
-    @Output() selectionLimitReached = new EventEmitter();
-    @Output() dropdownClosed = new EventEmitter();
-    @Output() onAdded = new EventEmitter();
-    @Output() onRemoved = new EventEmitter();
+export class MultiselectDropdown implements OnInit, DoCheck, ControlValueAccessor {
+	@Input() options: any[];
+	@Input() settings: MultiselectDropdownConfig;
+	@Input() texts: IMultiSelectTexts;
+	@Input() disabled: boolean = false;
+	@Input() labelFormatter: (option: any) => string;
+	@Output() selectionLimitReached = new EventEmitter();
+	@Output() dropdownClosed = new EventEmitter();
+	@Output() onAdded = new EventEmitter();
+	@Output() onRemoved = new EventEmitter();
 
-    @HostListener('document: click', ['$event.target'])
-    onClick(target: HTMLElement) {
-        let parentFound = false;
-        while (target != null && !parentFound) {
-            if (target === this.element.nativeElement) {
-                parentFound = true;
-            }
-            target = target.parentElement;
-        }
-        if (!parentFound) {
-            this.isVisible = false;
-            this.dropdownClosed.emit();
-        }
-    }
+	model: any[] = [];
+	title: string;
+	differ: any;
+	isVisible: boolean = false;
+	searchFilterText: string = '';
 
-    model: number[];
-    title: string;
-    differ: any;
-    numSelected: number = 0;
-    isVisible: boolean = false;
-    searchFilterText: string = '';
+	//TODO: extract this!
+	defaultTexts: IMultiSelectTexts = {
+		checkAll: 'Check all',
+		uncheckAll: 'Uncheck all',
+		checked: 'checked',
+		checkedPlural: 'checked',
+		searchPlaceholder: 'Search...',
+		defaultTitle: 'Select',
+		allSelected: 'All selected',
+	};
 
-    defaultTexts: IMultiSelectTexts = {
-        checkAll: 'Check all',
-        uncheckAll: 'Uncheck all',
-        checked: 'checked',
-        checkedPlural: 'checked',
-        searchPlaceholder: 'Search...',
-        defaultTitle: 'Select',
-        allSelected: 'All selected',
-    };
+	constructor(private element: ElementRef,
+				private multiselectDropdownConfig: MultiselectDropdownConfig,
+				differs: IterableDiffers) {
+		this.differ = differs.find([]).create(null);
+	}
 
-    constructor(private element: ElementRef,
-                private multiselectDropdownConfig: MultiselectDropdownConfig,
-                differs: IterableDiffers) {
-        this.differ = differs.find([]).create(null);
-    }
+	@HostListener('document: click', ['$event.target'])
+	onClick(target: HTMLElement) {
+		if(this.isVisible) {
+			let parentFound = false;
+			while (target != null && !parentFound) {
+				if (target === this.element.nativeElement) {
+					parentFound = true;
+				}
+				target = target.parentElement;
+			}
+			if (!parentFound) {
+				this.isVisible = false;
+				this.dropdownClosed.emit();
+			}
+		}
+	}
 
-    ngOnInit() {
-        this.settings = Object.assign(this.multiselectDropdownConfig, this.settings);
-        this.texts = Object.assign(this.defaultTexts, this.texts);
-        this.title = this.texts.defaultTitle || '';
-    }
+	ngOnInit() {
+		this.settings = Object.assign(this.multiselectDropdownConfig, this.settings);
+		this.texts = Object.assign(this.defaultTexts, this.texts);
+		this.title = this.texts.defaultTitle || '';
+	}
 
-    onModelChange: Function = (_: any) => {
-    };
-    onModelTouched: Function = () => {
-    };
+	onModelChange: (_: any) => void = (_: any) => {
+	};
+	onModelTouched: () => void = () => {
+	};
 
-    writeValue(value: any): void {
-        if (value !== undefined) {
-            this.model = value;
-        }
-    }
+	writeValue(value: any): void {
+		if (value) {
+			this.model = value;
+		}
+	}
 
-    registerOnChange(fn: Function): void {
-        this.onModelChange = fn;
-    }
+	registerOnChange(fn: (_: any) => void): void {
+		this.onModelChange = fn;
+	}
 
-    registerOnTouched(fn: Function): void {
-        this.onModelTouched = fn;
-    }
+	registerOnTouched(fn: () => void): void {
+		this.onModelTouched = fn;
+	}
 
-    setDisabledState(isDisabled: boolean) {
-        this.disabled = isDisabled;
-    }
+	setDisabledState(isDisabled: boolean) {
+		this.disabled = isDisabled;
+	}
 
-    ngDoCheck() {
-        const changes = this.differ.diff(this.model);
-        if (changes) {
-            this.updateNumSelected();
-            this.updateTitle();
-        }
-    }
+	ngDoCheck() {
+		const changes = this.differ.diff(this.model);
+		if (changes) {
+			this.updateTitle();
+		}
+	}
 
-    validate(c: AbstractControl): { [key: string]: any; } {
-        return (this.model && this.model.length) ? null : {
-            required: {
-                valid: false,
-            },
-        };
-    }
+	clearSearch(event: Event) {
+		event.stopPropagation();
+		this.searchFilterText = '';
+	}
 
-    registerOnValidatorChange(fn: () => void): void {
-        throw new Error('Method not implemented.');
-    }
+	toggleDropdown() {
+		this.isVisible = !this.isVisible;
+		if (!this.isVisible) {
+			this.dropdownClosed.emit();
+		}
+	}
 
-    clearSearch(event: Event) {
-        event.stopPropagation();
-        this.searchFilterText = '';
-    }
+	isSelected(option): boolean {
+		return this.model && this.model.indexOf(option) > -1;
+	}
 
-    toggleDropdown() {
-        this.isVisible = !this.isVisible;
-        if (!this.isVisible) {
-            this.dropdownClosed.emit();
-        }
-    }
+	toggleSelection(event: Event, option) {
+		if (!this.model) {
+			this.model = [];
+		}
+		const index = this.model.indexOf(option);
 
-    isSelected(option): boolean {
-        return this.model && this.model.indexOf(option) > -1;
-    }
+		if (index > -1) {
+			this.model.splice(index, 1);
+			this.onRemoved.emit(option);
+			this.emitModelChange()
+		} else if (!this.settings.selectionLimit || (this.model.length < this.settings.selectionLimit)) {
+			this.model.push(option);
+			this.onAdded.emit(option);
+			this.emitModelChange()
+		} else {
+			//TODO: what to do here?
+			this.selectionLimitReached.emit(this.model.length);
+			return;
+		}
+	}
 
-    setSelected(event: Event, option) {
-        if (!this.model) {
-            this.model = [];
-        }
-        const index = this.model.indexOf(option);
+	updateTitle() {
+		if (this.model.length === 0) {
+			this.title = this.texts.defaultTitle || '';
 
-        //TODO refactor this
-        if (index > -1) {
-            this.model.splice(index, 1);
-            this.onRemoved.emit(option);
-        } else {
-            if (this.settings.selectionLimit === 0 || (this.settings.selectionLimit && this.model.length < this.settings.selectionLimit)) {
-                this.model.push(option);
-                this.onAdded.emit(option);
-            } else {
-                /*if (this.settings.autoUnselect) {
-                 this.model.push(option.id);
-                 this.onAdded.emit(option.id);
-                 const removedOption = this.model.shift();
-                 this.onRemoved.emit(removedOption);
-                 } else {*/
-                this.selectionLimitReached.emit(this.model.length);
-                return;
-                //}
-            }
-        }
-        if (this.settings.closeOnSelect) {
-            this.toggleDropdown();
-        }
-        this.onModelChange(this.model);
-        this.onModelTouched();
-    }
+			//TODO
+			/*} else if (this.settings.dynamicTitleMaxItems && this.settings.dynamicTitleMaxItems >= this.numSelected) {
+			 this.title = this.options
+			 .filter((option) =>
+			 this.model && this.model.indexOf(option.id) > -1
+			 )
+			 .map((option) => option.name)
+			 .join(', ');*/
+		} else if (this.settings.displayAllSelectedText && this.model.length === this.options.length) {
+			this.title = this.texts.allSelected || '';
+		} else {
+			this.title = this.model.length
+				+ ' '
+				+ (this.model.length === 1 ? this.texts.checked : this.texts.checkedPlural);
+		}
+	}
 
-    updateNumSelected() {
-        this.numSelected = this.model && this.model.length || 0;
-    }
+	checkAll() {
+		this.model = this.options
+			.map((option) => {
+				if (this.model.indexOf(option) === -1) {
+					this.onAdded.emit(option);
+				}
+				return option;
+			});
+		this.emitModelChange()
+	}
 
-    updateTitle() {
-        if (this.numSelected === 0) {
-            this.title = this.texts.defaultTitle || '';
+	uncheckAll() {
+		this.model.forEach((id: number) => this.onRemoved.emit(id));
+		this.model = [];
+		this.emitModelChange();
+	}
 
-            //TODO
-            /*} else if (this.settings.dynamicTitleMaxItems && this.settings.dynamicTitleMaxItems >= this.numSelected) {
-             this.title = this.options
-             .filter((option) =>
-             this.model && this.model.indexOf(option.id) > -1
-             )
-             .map((option) => option.name)
-             .join(', ');*/
-        } else if (this.settings.displayAllSelectedText && this.model.length === this.options.length) {
-            this.title = this.texts.allSelected || '';
-        } else {
-            this.title = this.numSelected
-                + ' '
-                + (this.numSelected === 1 ? this.texts.checked : this.texts.checkedPlural);
-        }
-    }
+	preventCheckboxCheck(event: Event) {
+		event.stopPropagation();
+		event.preventDefault();
+	}
 
-    checkAll() {
-        this.model = this.options
-            .map((option) => {
-                if (this.model.indexOf(option) === -1) {
-                    this.onAdded.emit(option);
-                }
-                return option;
-            });
-        this.onModelChange(this.model);
-        this.onModelTouched();
-    }
+	formatOptionForLabel(item: any): string {
+		return item && this.labelFormatter ? this.labelFormatter(item) : item;
+	}
 
-    uncheckAll() {
-        this.model.forEach((id: number) => this.onRemoved.emit(id));
-        this.model = [];
-        this.onModelChange(this.model);
-        this.onModelTouched();
-    }
-
-    //TODO ?
-    preventCheckboxCheck(event: Event, option) {
-        if (this.settings.selectionLimit &&
-            this.model.length >= this.settings.selectionLimit &&
-            this.model.indexOf(option.id) === -1
-        ) {
-            event.preventDefault();
-        }
-    }
-
-    private formatOptionForLabel(item: any): string {
-        return item && this.labelFormatter ? this.labelFormatter(item) : item;
-    }
+	private emitModelChange() {
+		this.onModelChange(this.model);
+		this.onModelTouched();
+	}
 }
